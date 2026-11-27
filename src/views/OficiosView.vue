@@ -23,7 +23,43 @@
             class="mb-3"
             hide-details
           ></v-text-field>
+
+          <v-btn
+            :color="incluirEmpresa ? 'var(--custom-orange-accent)' : undefined"
+            :variant="incluirEmpresa ? 'flat' : 'outlined'"
+            size="small"
+            prepend-icon="mdi-domain"
+            class="mb-3"
+            @click="incluirEmpresa = !incluirEmpresa"
+          >
+            {{ incluirEmpresa ? 'Quitar empresa' : 'Agregar empresa / persona jurídica' }}
+          </v-btn>
+
+          <template v-if="incluirEmpresa">
+            <v-text-field
+              v-model="empresa"
+              label="Nombre / Razón social"
+              outlined
+              dense
+              class="mb-3"
+              hide-details
+            ></v-text-field>
+            <v-text-field
+              v-model="rutEmpresa"
+              label="RUT empresa (ej: 76.123.456-7)"
+              outlined
+              dense
+              @input="formatRutEmpresa"
+              maxlength="12"
+              class="mb-3"
+              hide-details
+            ></v-text-field>
+          </template>
+
           <h3 class="text-subtitle-1 mb-2 mt-4">Seleccionar Instituciones</h3>
+          <p v-if="incluirEmpresa" class="text-caption mb-2" style="color:#9E9E9E;">
+            La empresa solo se agrega a los textos de SII y Tesorería.
+          </p>
           <div class="checkbox-container mb-4">
             <v-checkbox v-model="instituciones" value="Registro Civil" label="Registro Civil" density="compact" hide-details></v-checkbox>
             <v-checkbox v-model="instituciones" value="SII" label="SII" density="compact" hide-details></v-checkbox>
@@ -93,6 +129,9 @@ export default {
       rut: '',
       instituciones: [],
       tooltipVisible: false,
+      incluirEmpresa: false,
+      empresa: '',
+      rutEmpresa: '',
     };
   },
   methods: {
@@ -100,6 +139,9 @@ export default {
       this.nombre = '';
       this.rut = '';
       this.instituciones = [];
+      this.incluirEmpresa = false;
+      this.empresa = '';
+      this.rutEmpresa = '';
     },
     formatRUT() {
       // ... (sin cambios)
@@ -119,9 +161,31 @@ export default {
       if (cuerpo && dv) {
         this.rut = `${cuerpo}-${dv}`;
       } else if (cuerpo) {
-          this.rut = cuerpo; 
+          this.rut = cuerpo;
       } else {
-          this.rut = dv; 
+          this.rut = dv;
+      }
+    },
+    formatRutEmpresa() {
+      let rutValue = this.rutEmpresa.replace(/[^\dkK.-]/g, '');
+      rutValue = rutValue.replace(/[.-]/g, '');
+
+      if (rutValue.length === 0) {
+        this.rutEmpresa = '';
+        return;
+      }
+
+      let cuerpo = rutValue.slice(0, -1);
+      let dv = rutValue.slice(-1).toUpperCase();
+
+      cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+      if (cuerpo && dv) {
+        this.rutEmpresa = `${cuerpo}-${dv}`;
+      } else if (cuerpo) {
+        this.rutEmpresa = cuerpo;
+      } else {
+        this.rutEmpresa = dv;
       }
     },
     validateRUTInput(value) {
@@ -142,14 +206,24 @@ export default {
       const rutMostrado = conFormato
         ? `<strong>cédula de identidad número ${rutSanitizado}</strong>`
         : `cédula de identidad número ${rutSanitizado}`;
-      
+
+      // Datos de la empresa / persona jurídica (opcional, solo SII y Tesorería)
+      const empresaSanitizada = (this.empresa || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const rutEmpresaSanitizado = (this.rutEmpresa || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const empresaMostrada = conFormato ? `<strong>${empresaSanitizada}</strong>` : empresaSanitizada;
+      const rutEmpresaMostrado = conFormato
+        ? `<strong>RUT ${rutEmpresaSanitizado}</strong>`
+        : `RUT ${rutEmpresaSanitizado}`;
+
       let texto = '';
       if (institucion === 'Registro Civil') {
         texto = `Atendido el convenio vigente entre el Poder Judicial y el Servicio de Registro Civil e Identificación y, habiéndose consultado en línea el domicilio de la parte demandada, ${nombreMostrado}, ${rutMostrado}, se informa que éste corresponde a XXXXXXX.`;
       } else if (institucion === 'SII') {
-        texto = `Atendido el convenio vigente entre el Poder Judicial y el Servicio de Impuestos Internos, aplíquese la nomenclatura [1390], a fin de generar informe de domicilio de ${nombreMostrado}, ${rutMostrado}.`;
+        const empresaSII = this.incluirEmpresa ? `, y de ${empresaMostrada}, ${rutEmpresaMostrado}` : '';
+        texto = `Atendido el convenio vigente entre el Poder Judicial y el Servicio de Impuestos Internos, aplíquese la nomenclatura [1390], a fin de generar informe de domicilio de ${nombreMostrado}, ${rutMostrado}${empresaSII}.`;
       } else if (institucion === 'Tesorería') {
-        texto = `En cuanto a Tesorería General de la República y atendido lo dispuesto expresamente por Circular N°5 DL N°3 de fecha 16 de Marzo de 2016 mediante la cual se permite al Poder Judicial ingresar a la base de datos de Tesorería General de la República para los efectos de realizar la consulta de domicilio de las personas que correspondan en determinado juicio, como se pide, y habiéndose consultado el domicilio de ${nombreMostrado}, ${rutMostrado}, este corresponde a XXXXXXXX.`;
+        const empresaTGR = this.incluirEmpresa ? ` Con respecto a ${empresaMostrada}, ${rutEmpresaMostrado}, este corresponde a XXXXXXXX.` : '';
+        texto = `En cuanto a Tesorería General de la República y atendido lo dispuesto expresamente por Circular N°5 DL N°3 de fecha 16 de Marzo de 2016 mediante la cual se permite al Poder Judicial ingresar a la base de datos de Tesorería General de la República para los efectos de realizar la consulta de domicilio de las personas que correspondan en determinado juicio, como se pide, y habiéndose consultado el domicilio de ${nombreMostrado}, ${rutMostrado}, este corresponde a XXXXXXXX.${empresaTGR}`;
       } else if (institucion === 'Servel') {
         texto = `En cuanto, al Servicio Electoral, como se pide, ofíciese a fin de informar el domicilio actual de ${nombreMostrado}, ${rutMostrado}. Póngase a disposición de la parte solicitante oficio material, través de la Oficina Judicial Virtual, al tercer día hábil desde la notificación por el estado diario de la presente resolución.`;
       } else if (institucion === 'PDI') {

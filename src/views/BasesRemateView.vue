@@ -64,6 +64,12 @@
               hide-details
               class="mb-3"
             ></v-select>
+            <v-checkbox
+              v-model="sinFecha"
+              label="Sin fecha"
+              density="compact"
+              hide-details
+            ></v-checkbox>
           </template>
 
           <div class="mt-6 text-right">
@@ -133,6 +139,7 @@ export default {
         deslindesLimitaciones: false,
       },
       tooltipVisible: false,
+      sinFecha: false,
       // Cada cláusula es un fragmento verbo-inicial (imperativo enclítico) que se
       // encadena tras "Previo a proveer,". El orden de este arreglo es el orden en
       // que aparecerán cuando su checkbox esté DESMARCADO. La citación va primera.
@@ -314,7 +321,17 @@ export default {
           .join('');
       });
 
-      return this.vistosIntro + seMantiene + articulado.join('');
+      let html = this.vistosIntro + seMantiene + articulado.join('');
+
+      // "Sin fecha": reemplaza el día/hora concretos por "en el día y hora a fijar".
+      if (this.sinFecha) {
+        html = html.replace(
+          'el día XXXX de XXX de XXXX, a las XXXX horas',
+          'en el día y hora a fijar'
+        );
+      }
+
+      return html;
     },
   },
 
@@ -348,6 +365,7 @@ export default {
       });
       this.clausulasIndividualizacion = [1, 2];
       this.clausulaMinimo = 3;
+      this.sinFecha = false;
     },
 
     async copyToClipboard() {

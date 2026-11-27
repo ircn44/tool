@@ -1,5 +1,10 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import {
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  browserSessionPersistence
+} from 'firebase/auth'
 
 // Config del proyecto Firebase (authpjud).
 // Estos valores NO son secretos: es normal que vayan en el código del cliente.
@@ -16,6 +21,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 
 export const auth = getAuth(app)
+
+// Persistencia de solo-sesión: la sesión se cierra al cerrar el navegador.
+setPersistence(auth, browserSessionPersistence).catch((e) => {
+  console.error('No se pudo fijar la persistencia de sesión:', e)
+})
 
 // Devuelve el usuario actual (o null) esperando a que Firebase
 // termine de restaurar la sesión. Se usa en el guard del router.
