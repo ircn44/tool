@@ -1,0 +1,49 @@
+rules_version = '2';
+
+// Reglas de seguridad de Firestore para el proyecto "tool" (authpjud).
+// Pégalas en: Firebase console -> Firestore Database -> Reglas -> Publicar.
+//
+// Modelo:
+//  - admins/{email}       : presencia del documento = es administrador.
+//  - autorizados/{email}  : presencia del documento = acceso permitido (lista blanca).
+//  - solicitudes/{email}  : solicitud de acceso creada por el propio usuario.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    function correo() {
+      return request.auth.token.email;
+    }
+
+    function esAdmin() {
+      return estaAutenticado()
+        && exists(/databases/$(database)/documents/admins/$(correo()));
+    }
+
+    // Lista blanca: cada quien puede leer SU propio documento (para saber si está
+    // autorizado al iniciar sesión); solo los admins pueden escribir.
+    match /autorizados/{id} {
+      allow read: if estaAutenticado() && (id == correo() || esAdmin());
+      allow write: if esAdmin();
+    }
+
+    // Administradores: cada quien puede leer SU propio documento (para saber si es
+    // admin). La escritura se hace solo a mano desde la consola.
+    match /admins/{id} {
+      allow read: if estaAutenticado() && (id == correo() || esAdmin());
+      allow write: if false;
+    }
+
+    // Solicitudes: el usuario crea/actualiza la suya (id = su correo);
+    // los admins pueden leerlas, aprobarlas o eliminarlas.
+    match /solicitudes/{id} {
+      allow read, delete: if esAdmin();
+      allow create, update: if esAdmin()
+        || (estaAutenticado() && id == correo() && request.resource.data.email == correo());
+    }
+  }
+}

@@ -5,6 +5,7 @@ import {
   setPersistence,
   browserSessionPersistence
 } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 // Config del proyecto Firebase (authpjud).
 // Estos valores NO son secretos: es normal que vayan en el código del cliente.
@@ -21,6 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 
 export const auth = getAuth(app)
+export const db = getFirestore(app)
 
 // Persistencia de solo-sesión: la sesión se cierra al cerrar el navegador.
 setPersistence(auth, browserSessionPersistence).catch((e) => {

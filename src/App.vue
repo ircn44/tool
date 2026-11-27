@@ -1,6 +1,16 @@
 <template>
   <v-app theme="dark">
     <v-btn
+      v-if="esAdmin"
+      class="admin-btn"
+      icon="mdi-shield-account"
+      size="small"
+      variant="text"
+      color="var(--custom-orange-accent)"
+      title="Administración de accesos"
+      :to="'/admin'"
+    ></v-btn>
+    <v-btn
       v-if="user"
       class="logout-btn"
       icon="mdi-logout"
@@ -21,25 +31,29 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { esAdmin as checkAdmin } from './auth';
 
 export default {
   name: 'App',
   setup() {
     const user = ref(null);
+    const esAdmin = ref(false);
     const router = useRouter();
 
     onMounted(() => {
-      onAuthStateChanged(auth, (u) => {
+      onAuthStateChanged(auth, async (u) => {
         user.value = u;
+        esAdmin.value = u ? await checkAdmin(u).catch(() => false) : false;
       });
     });
 
     const handleLogout = async () => {
       await signOut(auth);
+      esAdmin.value = false;
       router.push({ name: 'login' });
     };
 
-    return { user, handleLogout };
+    return { user, esAdmin, handleLogout };
   }
 };
 </script>
@@ -178,11 +192,17 @@ h3.text-subtitle-1 {
   color: #645b5b !important; // Un gris un poco más oscuro para subtítulos
 }
 
-// Botón de cerrar sesión, fijo arriba a la derecha
+// Botones fijos arriba a la derecha
 .logout-btn {
   position: fixed;
   top: 12px;
   right: 12px;
+  z-index: 2000;
+}
+.admin-btn {
+  position: fixed;
+  top: 12px;
+  right: 52px;
   z-index: 2000;
 }
 </style>

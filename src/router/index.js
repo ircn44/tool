@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { getCurrentUser } from '../firebase'
+import { esAdmin } from '../auth'
 
 const routes = [
   {
@@ -56,6 +57,12 @@ const routes = [
     path: '/basesremate',
     name: 'basesremate',
     component: () => import('../views/BasesRemateView.vue')
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    meta: { requiresAdmin: true },
+    component: () => import('../views/AdminView.vue')
   }
 ]
 
@@ -75,6 +82,11 @@ router.beforeEach(async (to) => {
 
   // Con sesión e intentando ir al login -> al inicio.
   if (to.name === 'login' && user) {
+    return { name: 'home' }
+  }
+
+  // Rutas solo para administradores.
+  if (to.meta.requiresAdmin && !(await esAdmin(user).catch(() => false))) {
     return { name: 'home' }
   }
 
