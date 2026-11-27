@@ -94,6 +94,7 @@ export default {
         'auth/user-not-found': 'Usuario o contraseña incorrectos.',
         'auth/wrong-password': 'Usuario o contraseña incorrectos.',
         'auth/invalid-credential': 'Usuario o contraseña incorrectos.',
+        'auth/operation-not-allowed': 'Falta activar Email/Contraseña en Firebase.',
         'auth/too-many-requests': 'Demasiados intentos. Espera un momento.',
         'auth/network-request-failed': 'Error de red. Revisa tu conexión.',
         'auth/invalid-api-key': 'Configuración de Firebase pendiente.',

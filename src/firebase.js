@@ -1,16 +1,16 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
-// ⚠️ REEMPLAZAR con la config real de tu proyecto Firebase
-// (Firebase console → Project settings ⚙️ → tus apps → Web → firebaseConfig)
+// Config del proyecto Firebase (authpjud).
 // Estos valores NO son secretos: es normal que vayan en el código del cliente.
 const firebaseConfig = {
-  apiKey: 'REEMPLAZAR_API_KEY',
-  authDomain: 'REEMPLAZAR.firebaseapp.com',
-  projectId: 'REEMPLAZAR',
-  storageBucket: 'REEMPLAZAR.appspot.com',
-  messagingSenderId: 'REEMPLAZAR_SENDER_ID',
-  appId: 'REEMPLAZAR_APP_ID'
+  apiKey: 'AIzaSyBeDfUN7XkQSXgpvPGgyQPuMxCHrwR72_0',
+  authDomain: 'authpjud.firebaseapp.com',
+  projectId: 'authpjud',
+  storageBucket: 'authpjud.firebasestorage.app',
+  messagingSenderId: '937031467280',
+  appId: '1:937031467280:web:baf4937610613f3e216595',
+  measurementId: 'G-LLEXMMT1Y6'
 }
 
 const app = initializeApp(firebaseConfig)
