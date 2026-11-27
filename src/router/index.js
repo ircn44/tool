@@ -1,7 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { getCurrentUser } from '../firebase'
 
 const routes = [
+  {
+    path: '/login',
+    name: 'login',
+    meta: { public: true },
+    component: () => import('../views/LoginView.vue')
+  },
   {
     path: '/',
     name: 'home',
@@ -55,6 +62,23 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+// Guard de autenticación: todo requiere sesión, salvo las rutas marcadas public.
+router.beforeEach(async (to) => {
+  const user = await getCurrentUser().catch(() => null)
+
+  // Sin sesión y la ruta no es pública -> al login (recordando a dónde iba).
+  if (!to.meta.public && !user) {
+    return { name: 'login', query: { redirect: to.fullPath } }
+  }
+
+  // Con sesión e intentando ir al login -> al inicio.
+  if (to.name === 'login' && user) {
+    return { name: 'home' }
+  }
+
+  return true
 })
 
 export default router

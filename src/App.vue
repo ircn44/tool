@@ -1,5 +1,15 @@
 <template>
   <v-app theme="dark">
+    <v-btn
+      v-if="user"
+      class="logout-btn"
+      icon="mdi-logout"
+      size="small"
+      variant="text"
+      color="var(--custom-orange-accent)"
+      title="Cerrar sesión"
+      @click="handleLogout"
+    ></v-btn>
     <v-main>
       <router-view/>
     </v-main>
@@ -7,8 +17,30 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { auth } from './firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+
 export default {
   name: 'App',
+  setup() {
+    const user = ref(null);
+    const router = useRouter();
+
+    onMounted(() => {
+      onAuthStateChanged(auth, (u) => {
+        user.value = u;
+      });
+    });
+
+    const handleLogout = async () => {
+      await signOut(auth);
+      router.push({ name: 'login' });
+    };
+
+    return { user, handleLogout };
+  }
 };
 </script>
 
@@ -144,5 +176,13 @@ h1.text-h5, h2.text-h5 {
 }
 h3.text-subtitle-1 {
   color: #645b5b !important; // Un gris un poco más oscuro para subtítulos
+}
+
+// Botón de cerrar sesión, fijo arriba a la derecha
+.logout-btn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 2000;
 }
 </style>
