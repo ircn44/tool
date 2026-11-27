@@ -1,56 +1,62 @@
 <template>
-  <v-main> <v-container fluid class="d-flex align-center justify-center fill-height">
-      <v-row class="w-100" align="center" justify="center" dense>
-        <v-col cols="12" md="auto" class="d-flex justify-center pa-3">
-          <v-btn 
-            :to="'/oficios'"
-            x-large 
-            rounded 
-            class="home-button apply-pulse-effect"
-            color="var(--custom-orange-accent)"
-            variant="flat" 
-            
-          >
-            <v-icon start size="large">mdi-email-edit-outline</v-icon> Oficios
-          </v-btn>
-        </v-col>
-        <v-col cols="12" md="auto" class="d-flex justify-center pa-3">
-          <v-btn 
-            :to="'/causaaprueba'"
-            x-large 
-            rounded 
-            class="home-button apply-pulse-effect"
-            color="var(--custom-orange-accent)"
-            variant="flat"
-          >
-            <v-icon start size="large">mdi-scale-balance</v-icon> Recibir Causa a Prueba
-          </v-btn>
-        </v-col>
-        <v-col cols="12" md="auto" class="d-flex justify-center pa-3">
-          <v-btn 
-            :to="'/demandanueva'"
-            x-large 
-            rounded 
-            class="home-button apply-pulse-effect"
-            color="var(--custom-orange-accent)"
-            variant="flat"
-          >
-            <v-icon start size="large">mdi-text-box-plus-outline</v-icon> Demanda Nueva
-          </v-btn>
-        </v-col>
-        <v-col cols="12" md="auto" class="d-flex justify-center pa-3">
-          <v-btn 
-            :to="'/notificaexpresamente'"
-            x-large 
-            rounded 
-            class="home-button apply-pulse-effect"
-            color="var(--custom-orange-accent)"
-            variant="flat"
-          >
-            <v-icon start size="large">mdi-check-all</v-icon> Notifica expresamente
-          </v-btn>
-        </v-col>
-      </v-row>
+  <v-main>
+    <v-container fluid class="d-flex align-center justify-center fill-height">
+      <v-col cols="12" class="d-flex flex-column align-center justify-center">
+        <v-btn 
+          :to="'/oficios'"
+          x-large 
+          rounded 
+          class="home-button apply-pulse-effect mb-4"
+          color="var(--custom-orange-accent)"
+          variant="flat"
+        >
+          <v-icon start size="large">mdi-email-edit-outline</v-icon> Oficios
+        </v-btn>
+        
+        <v-btn 
+          :to="'/causaaprueba'"
+          x-large 
+          rounded 
+          class="home-button apply-pulse-effect mb-4"
+          color="var(--custom-orange-accent)"
+          variant="flat"
+        >
+          <v-icon start size="large">mdi-scale-balance</v-icon> Recibir Causa a Prueba
+        </v-btn>
+        
+        <v-btn
+          :to="'/demandanueva'"
+          x-large
+          rounded
+          class="home-button apply-pulse-effect mb-4"
+          color="var(--custom-orange-accent)"
+          variant="flat"
+        >
+          <v-icon start size="large">mdi-text-box-plus-outline</v-icon> Demanda Nueva
+        </v-btn>
+
+        <v-btn
+          :to="'/previos'"
+          x-large
+          rounded
+          class="home-button apply-pulse-effect mb-4"
+          color="var(--custom-orange-accent)"
+          variant="flat"
+        >
+          <v-icon start size="large">mdi-format-list-checks</v-icon> Previos
+        </v-btn>
+
+        <v-btn
+          :to="'/basesremate'"
+          x-large
+          rounded
+          class="home-button apply-pulse-effect mb-4"
+          color="var(--custom-orange-accent)"
+          variant="flat"
+        >
+          <v-icon start size="large">mdi-gavel</v-icon> Bases de remate
+        </v-btn>
+      </v-col>
     </v-container>
   </v-main>
 </template>

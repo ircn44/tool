@@ -35,6 +35,21 @@ const routes = [
     name: 'notificaexpresamente',
     component: () => import(/* webpackChunkName: "about" */ '../views/NotificacionExpresaView.vue')
   },
+  {
+    path: '/citese',
+    name: 'citese',
+    component: () => import('../views/Citese.vue')
+  },
+  {
+    path: '/previos',
+    name: 'previos',
+    component: () => import('../views/PreviosView.vue')
+  },
+  {
+    path: '/basesremate',
+    name: 'basesremate',
+    component: () => import('../views/BasesRemateView.vue')
+  }
 ]
 
 const router = createRouter({

@@ -13,6 +13,14 @@
             <v-checkbox v-model="excepciones" value="Pago de la deuda" label="Pago de la deuda" density="compact" hide-details></v-checkbox>
             <v-checkbox v-model="excepciones" value="Concesión de esperas" label="Concesión de esperas" density="compact" hide-details></v-checkbox>
             <v-checkbox v-model="excepciones" value="Nulidad de la obligación" label="Nulidad de la obligación" density="compact" hide-details></v-checkbox>
+            <v-checkbox v-model="excepciones" value="Litispendencia" label="Litispendencia" density="compact" hide-details></v-checkbox>
+            <v-checkbox v-model="excepciones" value="Beneficio de excusión" label="Beneficio de excusión" density="compact" hide-details></v-checkbox>
+            <v-checkbox v-model="excepciones" value="Remisión" label="Remisión" density="compact" hide-details></v-checkbox>
+            <v-checkbox v-model="excepciones" value="Novación" label="Novación" density="compact" hide-details></v-checkbox>
+            <v-checkbox v-model="excepciones" value="Compensación" label="Compensación" density="compact" hide-details></v-checkbox>
+            <v-checkbox v-model="excepciones" value="Pérdida de la cosa" label="Pérdida de la cosa" density="compact" hide-details></v-checkbox>
+            <v-checkbox v-model="excepciones" value="Transacción" label="Transacción" density="compact" hide-details></v-checkbox>
+            <v-checkbox v-model="excepciones" value="Cosa Juzgada" label="Cosa Juzgada" density="compact" hide-details></v-checkbox>
           </div>
           <v-divider class="mb-4"></v-divider>
           <div class="checkbox-container2">
@@ -38,13 +46,13 @@
         <v-card class="pa-4" elevation="2">
           <h2 class="mb-4 text-h5">Resolución</h2>
           <div ref="ResolucionText" class="resolucion-texto mb-4" style="max-height: 400px; overflow-y: auto; border: 1px solid #444; padding: 10px; border-radius: 4px;">
-            <p><strong>Resolviendo presentación de fecha 28 de agosto de 2024, de folio 14:</strong><br></p>
-            <p>Téngase por evacuado el traslado conferido por resolución de folio 13. Estese a lo que se resolverá. <br></p>
+            <p><strong>Resolviendo presentación de fecha XXXX de XXXXX de XXXX, de folio XXXX:</strong><br></p>
+            <p>Téngase por evacuado el traslado conferido por resolución de folio XXXX. Estese a lo que se resolverá. <br></p>
             <p><strong>VISTOS:</strong><br></p>
-            <p>Se declaran admisibles las excepciones deducidas, y se reciben a prueba por el término legal, fijándose como puntos sobre los cuales deberán recaer, los siguientes;<br></p>
-            <ol v-if="excepcionesFiltradas.length > 0" class="pl-5">
-              <li v-for="(excepcion, index) in excepcionesFiltradas" :key="index">
-                {{ generarTexto(excepcion) }}
+            <p>Se declaran admisibles las excepciones deducidas, y se reciben a prueba por el término legal, fijándose como puntos sobre los cuales deberán recaer, los siguientes:<br></p>
+            <ol v-if="puntosNumerados.length > 0" class="pl-5">
+              <li v-for="(texto, index) in puntosNumerados" :key="index">
+                {{ texto }}
               </li>
             </ol>
 
@@ -90,12 +98,24 @@ export default {
   },
   computed: {
     excepcionesFiltradas() {
-      const grupo1 = ['Falta de capacidad', 'Falsedad del título', 'Falta de requisitos', 'Exceso de avalúo', 'Pago de la deuda', 'Concesión de esperas', 'Nulidad de la obligación'];
+      const grupo1 = ['Falta de capacidad', 'Falsedad del título', 'Falta de requisitos', 'Exceso de avalúo', 'Pago de la deuda', 'Concesión de esperas', 'Nulidad de la obligación', 'Litispendencia', 'Beneficio de excusión', 'Remisión', 'Novación', 'Compensación', 'Pérdida de la cosa', 'Transacción', 'Cosa Juzgada'];
       return this.excepciones.filter(ex => grupo1.includes(ex));
     },
     excepcionesNoNumeradas() {
       const grupo2 = ['Incompetencia', 'Ineptitud del libelo', 'Prescripción'];
       return this.excepciones.filter(ex => grupo2.includes(ex));
+    },
+    puntosNumerados() {
+      const puntos = [];
+      this.excepcionesFiltradas.forEach(ex => {
+        const texto = this.generarTexto(ex);
+        if (Array.isArray(texto)) {
+          puntos.push(...texto);
+        } else {
+          puntos.push(texto);
+        }
+      });
+      return puntos;
     }
   },
   methods: {
@@ -114,20 +134,35 @@ export default {
         return 'Efectividad que el título que se hace valer en juicio es falso.';
       } else if (excepcion === 'Falta de requisitos') {
         return 'Efectividad que el título que se hace valer en juicio carece de alguno de los requisitos o condiciones que establece la ley para que tenga mérito ejecutivo.';
-      } else if (excepcion === 'Exceso de avalúo') {
-        return 'Efectividad que en la obligación pretendida existiría un error de cálculo que constituiría un exceso de avalúo de la ejecución del presente juicio.';
       } else if (excepcion === 'Pago de la deuda') {
         return 'Efectividad que las demandadas pagaron total o parcialmente la obligación que se persigue; fechas y montos.';
       } else if (excepcion === 'Concesión de esperas') {
         return 'Efectividad de haber concedido la ejecutante esperas o prórrogas del plazo a la ejecutada.';
       } else if (excepcion === 'Novación') { 
-        return 'Texto para Novación';
+        return 'Efectividad que la obligación que se persigue en autos fue objeto de novación.';
       } else if (excepcion === 'Nulidad de la obligación') {
         return 'Efectividad que la obligación que se persigue en estos autos es nula.';
-      } else if (excepcion === 'Pérdida de la cosa') { 
-        return 'Texto para Pérdida de la cosa';
+      } else if (excepcion === 'Exceso de avalúo') { 
+        return 'Efectividad de existir un exceso de avalúo de los casos contemplados en los números 2° y 3° del art. 438 del Código de Procedimiento Civil, al momento de cuantificar el monto del presente negocio por la parte demandante.';
+      } else if (excepcion === 'Beneficio de excusión') { 
+        return 'Garantías y cauciones que se constituyeron con ocasión de la obligación que se persigue en autos. En su caso, efectividad de existir deudores subsidiarios.';
+      } else if (excepcion === 'Remisión') { 
+        return 'Efectividad de haberse extinguido la obligación por operar la remisión de la deuda.';
+      } else if (excepcion === 'Compensación') { 
+        return 'Efectividad que entre la parte ejecutante y la ejecutada, se haya producido una compensación total o parcial de la obligación perseguida en el presente juicio.';
+      } else if (excepcion === 'Litispendencia') { 
+        return 'Efectividad de existir identidad legal de personas, de la cosa pedida, y de la causa de pedir, entre las partes de este juicio y las que comparecen en los autos Rol C-XXXX-XXXX, seguidos ante el XX° Juzgado Civil de Santiago';
       } else if (excepcion === 'Prescripción') {
         return 'Respecto a la excepción de prescripción, atendida su naturaleza, se omite su recepción a prueba.';
+      } else if (excepcion === 'Pérdida de la cosa') {
+        return 'Efectividad de haberse perdido la cosa debida, por un hecho no imputable a la demandada. Hechos y circunstancias.';
+      } else if (excepcion === 'Transacción') {
+        return [
+          'Efectividad de haber operado transacción en relación a la obligación que se persigue en autos; circunstancias.',
+          'Existencia, condiciones y estipulaciones de la transacción invocada por el ejecutado.'
+        ];
+      } else if (excepcion === 'Cosa Juzgada') {
+        return 'Efectividad de existir identidad legal de personas, de la cosa pedida y de la causa de pedir, entre las partes de este juicio y las que comparecen en los autos Rol C-XXXX-XXX, caratulados "XXXX", seguidos ante el XX° Juzgado Civil de XXXX.';
       }
       return '';
     },

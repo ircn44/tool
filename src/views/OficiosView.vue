@@ -51,7 +51,7 @@
           <h2 class="mb-4 text-h5">Texto del oficio</h2>
           
           <div ref="oficioText" class="resolucion-texto-scrollable mb-4">
-            <p class="resolucion-texto mb-3"><strong>Resolviendo presentación de fecha XXXXX de XXXXX de XXXXXX a folio XXXXX:</strong></p>
+            <p class="resolucion-texto mb-3"><strong>Resolviendo presentación de fecha XXXXX de XXXXX de XXXXXX, de folio XXXXX:</strong></p>
             
             <div v-if="instituciones.length === 0" class="text-center grey--text" style="color: #9E9E9E !important;">
               <p>Selecciona una institución.</p>
@@ -153,7 +153,7 @@ export default {
       } else if (institucion === 'Servel') {
         texto = `En cuanto, al Servicio Electoral, como se pide, ofíciese a fin de informar el domicilio actual de ${nombreMostrado}, ${rutMostrado}. Póngase a disposición de la parte solicitante oficio material, través de la Oficina Judicial Virtual, al tercer día hábil desde la notificación por el estado diario de la presente resolución.`;
       } else if (institucion === 'PDI') {
-        texto = `Como se pide, ofíciese a Policía de Investigaciones de Chile, Departamento de Extranjería, a fin de que informe las entradas y salidas del país de la parte demandada ${nombreMostrado}, ${rutMostrado}, desde el año 2023 a la actualidad.`;
+        texto = `Como se pide, ofíciese a Policía de Investigaciones de Chile, Departamento de Extranjería, a fin de que informe las entradas y salidas del país de la parte demandada ${nombreMostrado}, ${rutMostrado}, desde el año XXXX a la actualidad.`;
       } else if (institucion === 'Carabineros') {
         texto = `Respecto al oficio solicitado para la Dirección General de Carabineros y Comisaría Virtual, y perteneciendo éstas a Carabineros de Chile, y por usar la misma de base de datos que el Registro Civil, no ha lugar por innecesario.`;
       } else if (institucion === 'Otros') {

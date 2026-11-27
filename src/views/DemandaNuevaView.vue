@@ -120,7 +120,7 @@ export default {
         'Al sexto otrosí': null, 'Al séptimo otrosí': null, 'Al octavo otrosí': null, 'Al noveno otrosí': null, 'Al décimo otrosí': null,
       },
       tooltipVisible: false,
-      titleText: 'Resolviendo presentación de fecha XXXX de XXXX de XXXX a folio 1:',
+      titleText: 'Resolviendo presentación de fecha XXXX de XXXX de XXXX, de folio 1:',
     };
   },
 
@@ -173,8 +173,7 @@ export default {
         if (text) texts.push(text);
       }
 
-      const concatenatedText = texts.join('; ');
-      let finalHtml = `<p class="indent">${concatenatedText ? concatenatedText + '.' : ''}</p>`;
+      let finalHtml = texts.map(t => `<p class="indent">${t}.</p>`).join('');
       finalHtml += `<p class="indent"><strong>CUANTÍA:</strong> </p>`;
       return finalHtml;
     },
@@ -207,7 +206,7 @@ export default {
         if (option === 'Notifíquese y requiérase personalmente al ejecutado') return `${boldLabel}: Notifíquese y requiérase personalmente al ejecutado`;
       } else {
         if (option === 'Señala bienes') return `${boldLabel}: téngase presente, y sólo sobre bienes suficientes de la parte ejecutada, la que queda como depositaria provisional`;
-        if (option === 'Acompaña documentos') return `${boldLabel}: téngase por acompañado el pagaré y contrato bajo apercibimiento del artículo 346 N°3 del Código de Procedimiento Civil. Custódiese el pagaré bajo el número XXXX-2025. A los demás documentos, por acompañados, con citación`;
+        if (option === 'Acompaña documentos') return `${boldLabel}: téngase por acompañado el pagaré, y por acompañado el contrato bajo apercibimiento del artículo 346 N°3 del Código de Procedimiento Civil. Custódiese el pagaré bajo el número XXXX-2026. A los demás documentos, por acompañados, con citación`;
         if (option === 'Exhórtese') return `${boldLabel}: como se pide, exhórtese vía interconexión al Juzgado de Letras de turno en lo Civil de XXXX, a fin de practicarse la notificación de la demanda al ejecutado, requerirlo de pago y trabar el embargo sobre las especies de su propiedad, de ser necesario y facultándose, en caso de oposición, a conceder el auxilio de fuerza pública con facultades de allanamiento y descerrajamiento, además de todas aquellas diligencias y actuaciones necesarias y conducentes para obtener el cabal y pronto diligenciamiento del presente exhorto`;
         if (option === 'Estése 44') return `${boldLabel}: estese a lo dispuesto en el artículo 44 del Código de Procedimiento Civil`;
         if (option === 'Téngase presente') return `${boldLabel}: téngase presente`;
@@ -225,7 +224,8 @@ export default {
       if (!this.$refs.resolucionText) return;
       try {
         const htmlContent = this.$refs.resolucionText.innerHTML;
-        const styledHtmlToCopy = `<div style="font-family: Batang, serif; font-size: 12px; text-align: justify;">${htmlContent}</div>`;
+        const processedHtml = htmlContent.replace(/<p[^>]*class="indent"[^>]*>/g, '<p style="text-indent: 2em; margin-bottom: 0.5em;">');
+        const styledHtmlToCopy = `<div style="font-family: Batang, serif; font-size: 12pt; text-align: justify; line-height: 1.5;">${processedHtml}</div>`;
         const plainText = this.$refs.resolucionText.innerText;
 
         await navigator.clipboard.write([
@@ -252,7 +252,7 @@ export default {
   font-family: 'Batang', serif; 
   font-size: 12px;
   text-align: justify;
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--custom-beige-text);
 }
 
