@@ -59,6 +59,11 @@ const routes = [
     component: () => import('../views/BasesRemateView.vue')
   },
   {
+    path: '/modelos',
+    name: 'modelos',
+    component: () => import('../views/ModelosView.vue')
+  },
+  {
     path: '/admin',
     name: 'admin',
     meta: { requiresAdmin: true },

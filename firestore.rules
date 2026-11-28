@@ -24,6 +24,12 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/admins/$(correo()));
     }
 
+    // Autorizado = está en la lista blanca o es admin.
+    function estaAutorizado() {
+      return estaAutenticado()
+        && (exists(/databases/$(database)/documents/autorizados/$(correo())) || esAdmin());
+    }
+
     // Lista blanca: cada quien puede leer SU propio documento (para saber si está
     // autorizado al iniciar sesión); solo los admins pueden escribir.
     match /autorizados/{id} {
@@ -44,6 +50,17 @@ service cloud.firestore {
       allow read, delete: if esAdmin();
       allow create, update: if esAdmin()
         || (estaAutenticado() && id == correo() && request.resource.data.email == correo());
+    }
+
+    // Modelos de resoluciones (contenido): lo leen los autorizados;
+    // solo los admins los escriben (importación).
+    match /modelos/{id} {
+      allow read: if estaAutorizado();
+      allow write: if esAdmin();
+    }
+    match /modelos_index/{id} {
+      allow read: if estaAutorizado();
+      allow write: if esAdmin();
     }
   }
 }

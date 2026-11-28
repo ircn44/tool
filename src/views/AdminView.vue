@@ -82,6 +82,35 @@
               </v-list-item>
             </v-list>
           </template>
+
+          <v-divider class="my-4"></v-divider>
+
+          <!-- Importar modelos del Drive -->
+          <h3 class="text-subtitle-1 mb-2">Importar modelos del Drive</h3>
+          <p class="text-caption mb-2" style="color:#9E9E9E;">
+            Sube los archivos <code>modelos_*.json</code> exportados del Drive. Reemplaza los existentes.
+          </p>
+          <v-file-input
+            v-model="archivos"
+            label="Archivos JSON"
+            multiple
+            accept=".json,application/json"
+            density="compact"
+            variant="outlined"
+            prepend-icon="mdi-upload"
+            hide-details
+            class="mb-2"
+          ></v-file-input>
+          <v-btn
+            color="var(--custom-orange-accent)"
+            variant="flat"
+            :loading="importando"
+            :disabled="!archivos || archivos.length === 0"
+            @click="importar"
+          >
+            Importar
+          </v-btn>
+          <p v-if="progreso" class="text-caption mt-2" style="color:#9E9E9E;">{{ progreso }}</p>
         </v-card>
       </v-col>
     </v-row>
@@ -96,6 +125,7 @@ import {
   rechazarSolicitud,
   quitarAutorizado
 } from '../auth'
+import { importarCategorias } from '../modelos'
 
 export default {
   name: 'AdminView',
@@ -105,7 +135,10 @@ export default {
       autorizados: [],
       cargando: true,
       accion: '',
-      error: ''
+      error: '',
+      archivos: [],
+      importando: false,
+      progreso: ''
     }
   },
   async mounted() {
@@ -159,6 +192,28 @@ export default {
         this.error = 'No se pudo quitar el autorizado.'
       } finally {
         this.accion = ''
+      }
+    },
+    async importar() {
+      this.importando = true
+      this.error = ''
+      this.progreso = 'Leyendo archivos…'
+      try {
+        const arboles = []
+        for (const f of this.archivos) {
+          const txt = await f.text()
+          arboles.push(JSON.parse(txt))
+        }
+        await importarCategorias(arboles, (hechos, total, nombre) => {
+          this.progreso = `Guardando ${hechos}/${total}: ${nombre}`
+        })
+        this.progreso = `Listo. Se importaron ${arboles.length} categoría(s).`
+        this.archivos = []
+      } catch (e) {
+        this.error = 'Error al importar: ' + (e && e.message ? e.message : e)
+        this.progreso = ''
+      } finally {
+        this.importando = false
       }
     }
   }

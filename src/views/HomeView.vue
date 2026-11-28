@@ -2,10 +2,21 @@
   <v-main>
     <v-container fluid class="d-flex align-center justify-center fill-height">
       <v-col cols="12" class="d-flex flex-column align-center justify-center">
-        <v-btn 
+        <v-btn
+          :to="'/modelos'"
+          x-large
+          rounded
+          class="home-button apply-pulse-effect mb-4"
+          color="var(--custom-orange-accent)"
+          variant="flat"
+        >
+          <v-icon start size="large">mdi-folder-text-outline</v-icon> Modelos
+        </v-btn>
+
+        <v-btn
           :to="'/oficios'"
-          x-large 
-          rounded 
+          x-large
+          rounded
           class="home-button apply-pulse-effect mb-4"
           color="var(--custom-orange-accent)"
           variant="flat"
