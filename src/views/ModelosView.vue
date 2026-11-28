@@ -13,14 +13,24 @@
           </template>
         </div>
         <v-spacer></v-spacer>
-        <v-btn variant="text" color="var(--custom-orange-accent)" :to="'/'">Inicio</v-btn>
+        <v-btn
+          v-if="catTree || docSel"
+          variant="text"
+          size="small"
+          prepend-icon="mdi-arrow-left"
+          color="var(--custom-orange-accent)"
+          @click="volver"
+        >
+          Volver
+        </v-btn>
+        <v-btn variant="text" size="small" color="var(--custom-orange-accent)" :to="'/'">Inicio</v-btn>
       </div>
 
       <!-- Buscador (dentro de una categoría, en modo navegación) -->
       <v-text-field
         v-if="catTree && !docSel"
         v-model="buscar"
-        label="Buscar modelo en esta categoría"
+        label="Buscar por nombre o contenido en esta categoría"
         prepend-inner-icon="mdi-magnify"
         density="compact"
         variant="outlined"
@@ -41,8 +51,6 @@
       <template v-else-if="docSel">
         <div class="d-flex align-center mb-3" style="gap:8px;">
           <h3 class="text-subtitle-1">{{ docSel.name }}</h3>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" size="small" @click="docSel = null">Volver</v-btn>
         </div>
         <template v-if="docSel.html">
           <div ref="docHtml" class="modelo-contenido" v-html="docSel.html"></div>
@@ -153,7 +161,8 @@ export default {
         const items = node.children || []
         items.forEach((c) => {
           if (c.type === 'doc') {
-            if (this.norm(c.name).includes(q)) out.push({ node: c, ruta: ruta.join(' / ') })
+            const texto = c._buscable || this.norm(c.name)
+            if (texto.includes(q)) out.push({ node: c, ruta: ruta.join(' / ') })
           } else {
             walk(c, ruta.concat(c.name))
           }
@@ -176,6 +185,29 @@ export default {
     norm(s) {
       return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
     },
+    stripHtml(html) {
+      if (!html) return ''
+      const d = document.createElement('div')
+      d.innerHTML = html
+      return d.innerText || d.textContent || ''
+    },
+    // Precalcula el texto buscable (nombre + contenido) de cada modelo.
+    indexar(node) {
+      const items = node.children || []
+      items.forEach((c) => {
+        if (c.type === 'doc') {
+          c._buscable = this.norm(c.name + ' ' + this.stripHtml(c.html))
+        } else {
+          this.indexar(c)
+        }
+      })
+    },
+    volver() {
+      if (this.docSel) { this.docSel = null; return }
+      if (this.buscar) { this.buscar = ''; return }
+      if (this.path.length) { this.path.pop(); return }
+      if (this.catTree) { this.irIndice() }
+    },
     async abrirCategoria(c) {
       this.loading = true
       this.error = ''
@@ -185,6 +217,7 @@ export default {
       try {
         const res = await cargarCategoria(c.id)
         this.catTree = res ? res.arbol : null
+        if (this.catTree) this.indexar(this.catTree)
         if (!this.catTree) this.error = 'No se pudo cargar esta categoría.'
       } catch (e) {
         this.error = 'No se pudo cargar esta categoría.'
