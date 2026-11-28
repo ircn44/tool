@@ -3,6 +3,13 @@ node_modules
 /dist
 .claude/
 
+# Datos exportados del Drive (contenido sensible: NO publicar)
+modelos_*.json
+modelos_export.json
+exportar_modelos.gs
+drive-download-*/
+drive-download-*.zip
+
 
 # local env files
 .env.local
